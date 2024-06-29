@@ -1,0 +1,29 @@
+<p>Hi <%= @resource.name %>,</p>
+
+<% account_user = @resource&.account_users&.first %>
+
+<% if account_user&.inviter.present? && @resource.unconfirmed_email.blank? %>
+  <p><%= account_user.inviter.name %>, with <%= account_user.account.name %>, convidou você para experimentar <%= global_config['BRAND_NAME'] || 'Letschat' %>.</p>
+<% end %>
+
+<% if @resource.confirmed? %>
+  <p>Você pode fazer login na sua <%= global_config['BRAND_NAME'] || 'Letschat' %> conta através do link abaixo:</p>
+<% else %>
+  <% if account_user&.inviter.blank? %>
+  <p>
+    Bem-vindo ao <%= global_config['BRAND_NAME'] || 'Letschat' %>! Temos um conjunto de ferramentas poderosas prontas para você explorar. Antes disso, precisamos verificar rapidamente seu endereço de e-mail para saber que é realmente você.
+  </p>
+  <% end %>
+  <p>Por favor, reserve um momento, clique no link abaixo e ative sua conta.</p>
+<% end %>
+
+
+<% if @resource.unconfirmed_email.present? %>
+  <p><%= link_to 'Confirme minha conta', frontend_url('auth/confirmation', confirmation_token: @token) %></p>
+<% elsif @resource.confirmed? %>
+  <p><%= link_to 'Acesse minha conta', frontend_url('auth/sign_in') %></p>
+<% elsif account_user&.inviter.present? %>
+  <p><%= link_to 'Confirme minha conta', frontend_url('auth/password/edit', reset_password_token: @resource.send(:set_reset_password_token)) %></p>
+<% else %>
+  <p><%= link_to 'Confirme minha conta', frontend_url('auth/confirmation', confirmation_token: @token) %></p>
+<% end %>
