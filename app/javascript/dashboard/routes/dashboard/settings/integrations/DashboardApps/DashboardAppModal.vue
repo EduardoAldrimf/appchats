@@ -35,18 +35,6 @@
           data-testid="app-url"
           @input="$v.app.content.url.$touch"
         />
-        <!-- Checkbox Dashboard Fixed -->
-        <div class="flex items-center">
-          <input 
-            type="checkbox" 
-            id="dashboard-fixed" 
-            v-model="app.dashboardFixed" 
-            data-testid="dashboard-fixed"
-          />
-          <label for="dashboard-fixed" class="ml-2">
-            {{ $t('INTEGRATION_SETTINGS.DASHBOARD_APPS.FORM.DASHBOARD_FIXED_LABEL') }}
-          </label>
-        </div>
         <div class="flex flex-row justify-end w-full gap-2 px-0 py-2">
           <woot-button
             :is-loading="isLoading"
@@ -91,7 +79,6 @@ export default {
         type: { required },
         url: { required, url },
       },
-      dashboardFixed: { required }
     },
   },
   data() {
@@ -103,7 +90,6 @@ export default {
           type: 'frame',
           url: '',
         },
-        dashboardFixed: false,
       },
     };
   },
@@ -121,7 +107,6 @@ export default {
     if (this.mode === 'UPDATE' && this.selectedAppData) {
       this.app.title = this.selectedAppData.title;
       this.app.content = this.selectedAppData.content[0];
-      this.app.dashboardFixed = this.selectedAppData.dashboardFixed || false;
     }
   },
   methods: {
@@ -130,7 +115,6 @@ export default {
       this.app = {
         title: '',
         content: { type: 'frame', url: '' },
-        dashboardFixed: false,
       };
       this.$emit('close');
     },
@@ -145,7 +129,6 @@ export default {
         const payload = {
           title: this.app.title,
           content: [this.app.content],
-          dashboardFixed: this.app.dashboardFixed,
         };
 
         if (action === 'update') {
