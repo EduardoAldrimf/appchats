@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="hasSecondaryMenu"
-    :class="['h-full overflow-auto flex flex-col bg-white dark:bg-slate-900 border-r dark:border-slate-800/50 rtl:border-r-0 rtl:border-l border-slate-50 text-sm px-2 pb-8', { 'w-48': !isDashboardFixed, 'w-64': isDashboardFixed }]"
+    class="h-full overflow-auto w-48 flex flex-col bg-white dark:bg-slate-900 border-r dark:border-slate-800/50 rtl:border-r-0 rtl:border-l border-slate-50 text-sm px-2 pb-8"
   >
     <account-context @toggle-accounts="toggleAccountModal" />
     <transition-group
@@ -23,7 +23,6 @@
     </transition-group>
   </div>
 </template>
-
 <script>
 import { frontendURL } from '../../../helper/URLHelper';
 import SecondaryNavItem from './SecondaryNavItem.vue';
@@ -69,14 +68,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    isDashboardFixed: {
-      type: Boolean,
-      default: false,
-    },
   },
   computed: {
     ...mapGetters({
       isFeatureEnabledonAccount: 'accounts/isFeatureEnabledonAccount',
+      currentRole: 'getCurrentRole',
     }),
     hasSecondaryMenu() {
       return this.menuConfig.menuItems && this.menuConfig.menuItems.length;
@@ -101,7 +97,19 @@ export default {
         return true;
       });
     },
-    inboxSection() {
+
+    hideAllInboxForAgents() {
+    return (
+      this.isFeatureEnabledonAccount(
+        this.accountId,
+        'hide_all_inbox_for_agent'
+      ) && this.currentRole !== 'administrator'
+    );
+  },
+  inboxSection() {
+    if (this.hideAllInboxForAgents && this.currentRole !== 'administrator') {
+      return {};
+    }
       return {
         icon: 'folder',
         label: 'INBOXES',
@@ -258,15 +266,6 @@ export default {
     },
     showNewLink(featureFlag) {
       return this.isFeatureEnabledonAccount(this.accountId, featureFlag);
-    },
-  },
-  watch: {
-    isDashboardFixed(newVal) {
-      if (newVal) {
-        // Logic to fix the dashboard (optional: you can add more logic here)
-      } else {
-        // Logic to unfix the dashboard (optional: you can add more logic here)
-      }
     },
   },
 };
