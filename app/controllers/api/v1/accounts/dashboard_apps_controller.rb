@@ -34,7 +34,6 @@ class Api::V1::Accounts::DashboardAppsController < Api::V1::Accounts::BaseContro
   def permitted_payload
     params.require(:dashboard_app).permit(
       :title,
-      :dashboard_fixed,  # Adicionando o novo atributo aqui
       content: [:url, :type]
     )
   end
